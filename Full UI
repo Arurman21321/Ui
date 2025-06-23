@@ -7182,7 +7182,7 @@ function library:CreateWindow(options, ...)
 						isDraggingSomething = true
 
 						colorInput = runService.RenderStepped:Connect(function()
-							local pos = UserInputService:GetMouseLocation() -- touch or mouse
+							local pos = userInputService:GetMouseLocation() -- touch or mouse
 							local colorX = math.clamp(pos.X - color.AbsolutePosition.X, 0, color.AbsoluteSize.X) / color.AbsoluteSize.X
 							local colorY = math.clamp(pos.Y - color.AbsolutePosition.Y, 0, color.AbsoluteSize.Y) / color.AbsoluteSize.Y
 							selectorColor.Position = UDim2.fromScale(colorX, colorY)
