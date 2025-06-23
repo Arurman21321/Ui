@@ -7359,6 +7359,15 @@ function library:CreateWindow(options, ...)
 			end
 		end
 		
+		local userInputService = game:GetService("UserInputService")
+
+		userInputService.InputEnded:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				isDraggingSomething = false
+			end
+		end)
+
+		
 		
 		
 		
