@@ -2163,11 +2163,8 @@ function library:CreateWindow(options, ...)
 	mobileToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 	mobileToggleButton.BorderSizePixel = 0
 
-	mobileToggleButton.Activated:Connect(function()
-		main.Visible = not main.Visible
-	end)
-
 	local dragging = false
+	local wasDragged = false -- 🔥 new flag
 	local dragInput
 	local dragStart
 	local startPos
@@ -2183,6 +2180,7 @@ function library:CreateWindow(options, ...)
 	mobileToggleButton.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			dragging = true
+			wasDragged = false
 			dragStart = input.Position
 			startPos = Vector2.new(
 				mobileToggleButton.Position.X.Offset,
@@ -2199,6 +2197,7 @@ function library:CreateWindow(options, ...)
 
 	userInputService.InputChanged:Connect(function(input)
 		if dragging and input == dragInput then
+			wasDragged = true -- ✅ we detect movement
 			update(input)
 		end
 	end)
@@ -2206,6 +2205,12 @@ function library:CreateWindow(options, ...)
 	mobileToggleButton.InputEnded:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			dragging = false
+		end
+	end)
+
+	mobileToggleButton.Activated:Connect(function()
+		if not wasDragged then
+			main.Visible = not main.Visible
 		end
 	end)
 
