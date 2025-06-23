@@ -1,3 +1,8 @@
+--[[
+Automated mobile support refactoring:
+- Added touch handling for 0 drag blocks
+Be sure to test thoroughly.
+]]
 
 --[[ Pepsi's UI Library
 Better and updated web-based docs are planned in distant future.
@@ -4376,7 +4381,7 @@ function library:CreateWindow(options, ...)
 				            if currentSliderInput and sliderDragging then
 				                local pos = (currentSliderInput.UserInputType == Enum.UserInputType.Touch)
 				                            and currentSliderInput.Position or Vector2.new(mouse.X, mouse.Y)
-				                sliding({'Position'=pos}, sliderInner, sliderColored)
+				                sliding({Position = pos}, sliderInner, sliderColored)
 				            end
 				        end)
 				        library.signals[#library.signals+1] = sliderDragConn
@@ -4410,7 +4415,7 @@ function library:CreateWindow(options, ...)
 				            if currentSliderInput and sliderDragging then
 				                local pos = (currentSliderInput.UserInputType == Enum.UserInputType.Touch)
 				                            and currentSliderInput.Position or Vector2.new(mouse.X, mouse.Y)
-				                sliding({'Position'=pos}, sliderInner, sliderColored)
+				                sliding({Position = pos}, sliderInner, sliderColored)
 				            end
 				        end)
 				        library.signals[#library.signals+1] = sliderDragConn
