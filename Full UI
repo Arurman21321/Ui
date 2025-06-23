@@ -1,9 +1,3 @@
---[[
-Automated mobile support refactoring:
-- Added touch handling for 0 drag blocks
-Be sure to test thoroughly.
-]]
-
 --[[ Pepsi's UI Library
 Better and updated web-based docs are planned in distant future.
 Library v0.36 [
@@ -1126,16 +1120,8 @@ local function resetall()
 end
 library.ResetAll = resetall
 local textService = game:GetService("TextService")
+local sliderData = {}
 local userInputService = game:GetService("UserInputService")
-
--- Mobile: stop dragging on touch release anywhere
-userInputService.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.Touch then
-		-- Reset global dragging flag
-		isDraggingSomething = false
-	end
-end)
-
 local runService = game:GetService("RunService")
 local LP = playersservice.LocalPlayer
 library.LP = LP
@@ -1198,7 +1184,7 @@ local function makeDraggable(topBarObject, object)
 	local dragStart = nil
 	local startPosition = nil
 	library.signals[1 + #library.signals] = topBarObject.InputBegan:Connect(function(input)
-		if ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch then
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			dragging = true
 			dragStart = input.Position
 			startPosition = object.Position
@@ -1210,7 +1196,7 @@ local function makeDraggable(topBarObject, object)
 		end
 	end)
 	library.signals[1 + #library.signals] = topBarObject.InputChanged:Connect(function(input)
-		if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch then
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 			dragInput = input
 		end
 	end)
@@ -1630,7 +1616,7 @@ do
 			end
 			PromptObj.Close = ClosePrompt
 			if Close then
-				Close.Activated:Connect(((DoClose ~= true) and DoClose) or ClosePrompt)
+				Close.MouseButton1Click:Connect(((DoClose ~= true) and DoClose) or ClosePrompt)
 			end
 			do
 				local NameTxt = PromptData.Name
@@ -2168,7 +2154,7 @@ function library:CreateWindow(options, ...)
 			end
 		end)
 	end
-
+	
 	local mobileToggleButton = Instance.new("TextButton")
 	mobileToggleButton.Parent = pepsiLibrary
 	mobileToggleButton.Text = "Toggle UI"
@@ -2193,7 +2179,7 @@ function library:CreateWindow(options, ...)
 	end
 
 	mobileToggleButton.InputBegan:Connect(function(input)
-		if ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch then
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			dragging = true
 			wasDragged = false
 			dragStart = input.Position
@@ -2205,7 +2191,7 @@ function library:CreateWindow(options, ...)
 	end)
 
 	mobileToggleButton.InputChanged:Connect(function(input)
-		if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch then
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 			dragInput = input
 		end
 	end)
@@ -2218,7 +2204,7 @@ function library:CreateWindow(options, ...)
 	end)
 
 	mobileToggleButton.InputEnded:Connect(function(input)
-		if ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch then
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			dragging = false
 		end
 	end)
@@ -2228,7 +2214,7 @@ function library:CreateWindow(options, ...)
 			main.Visible = not main.Visible
 		end
 	end)
-
+	
 	local windowFunctions = {
 		tabCount = 0,
 		selected = {},
@@ -2347,7 +2333,7 @@ function library:CreateWindow(options, ...)
 		if not homepage and newTab.LayoutOrder <= 4 then
 			homepage = goto
 		end
-		library.signals[1 + #library.signals] = newTab.Activated:Connect(goto)
+		library.signals[1 + #library.signals] = newTab.MouseButton1Click:Connect(goto)
 		if windowFunctions.tabCount == 1 then
 			tabSlider.Size = UDim2.fromOffset(newTab.AbsoluteSize.X, 1)
 			tabSlider.Position = UDim2.fromOffset(newTab.AbsolutePosition.X, newTab.AbsolutePosition.Y + newTab.AbsoluteSize.Y) - UDim2.fromOffset(main.AbsolutePosition.X, main.AbsolutePosition.Y)
@@ -2769,7 +2755,7 @@ function library:CreateWindow(options, ...)
 						end)
 						library.signals[1 + #library.signals] = receivingKey
 					end
-					library.signals[1 + #library.signals] = keybindButton.Activated:Connect(newkey)
+					library.signals[1 + #library.signals] = keybindButton.MouseButton1Click:Connect(newkey)
 					if kbpresscallback and not justBinded then
 						library.signals[1 + #library.signals] = userInputService.InputBegan:Connect(function(key, chatting)
 							chatting = chatting or (userInputService:GetFocusedTextBox() and true)
@@ -2915,7 +2901,7 @@ function library:CreateWindow(options, ...)
 					tabFunctions.Flags[kbflag], sectionFunctions.Flags[kbflag], elements[kbflag] = objectdata, objectdata, objectdata
 				end
 				sectionFunctions:Update()
-				library.signals[1 + #library.signals] = toggleButton.Activated:Connect(function()
+				library.signals[1 + #library.signals] = toggleButton.MouseButton1Click:Connect(function()
 					if not library.colorpicker and not submenuOpen and not lockedup then
 						local newval = not library_flags[flagName]
 						if options.Condition ~= nil then
@@ -3199,7 +3185,7 @@ function library:CreateWindow(options, ...)
 					offset = offset + textsize + 6
 					sectionFunctions:Update()
 					local presses = 0
-					library.signals[1 + #library.signals] = realButton.Activated:Connect(function()
+					library.signals[1 + #library.signals] = realButton.MouseButton1Click:Connect(function()
 						if lockedup then
 							return
 						end
@@ -3863,9 +3849,9 @@ function library:CreateWindow(options, ...)
 					end)
 					library.signals[1 + #library.signals] = receivingKey
 				end
-				library.signals[1 + #library.signals] = keybindButton.Activated:Connect(newkey)
+				library.signals[1 + #library.signals] = keybindButton.MouseButton1Click:Connect(newkey)
 				library.signals[1 + #library.signals] = newKeybind.InputEnded:Connect(function(input)
-					if not library.colorpicker and not submenuOpen and ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) then
+					if not library.colorpicker and not submenuOpen and input.UserInputType == Enum.UserInputType.MouseButton1 then
 						newkey()
 					end
 				end)
@@ -4353,50 +4339,70 @@ function library:CreateWindow(options, ...)
 					end
 					last_val = sliderValue
 				end
-				local currentSliderInput = nil
-				local sliderDragConn = nil
-				local sliderMoveConn = nil
-				library.signals[1 + #library.signals] = newSlider.InputBegan:Connect(function(input)
-					if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
-						sliderDragging = true
-						isDraggingSomething = true
-						currentSliderInput = input
-						-- Track touch movement
-						sliderMoveConn = userInputService.InputChanged:Connect(function(inp)
-							if sliderDragging and inp.UserInputType == Enum.UserInputType.Touch then
-								currentSliderInput = inp
-							end
-						end)
-						library.signals[#library.signals+1] = sliderMoveConn
-					end
+								library.signals[1 + #library.signals] = newSlider.InputBegan:Connect(function(input)
+				    if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+				        sliderDragging = true
+				        isDraggingSomething = true
+				        -- Initialize slider data
+				        sliderData[newSlider] = sliderData[newSlider] or {}
+				        sliderData[newSlider].currentInput = input
+				        -- Track touch movement
+				        sliderData[newSlider].moveConn = userInputService.InputChanged:Connect(function(inp)
+				            if sliderData[newSlider] and sliderDragging and inp.UserInputType == Enum.UserInputType.Touch then
+				                sliderData[newSlider].currentInput = inp
+				            end
+				        end)
+				        library.signals[#library.signals+1] = sliderData[newSlider].moveConn
+				        -- Start RenderStepped drag loop
+				        sliderData[newSlider].dragConn = runService.RenderStepped:Connect(function()
+				            local data = sliderData[newSlider]
+				            if data and data.currentInput then
+				                local pos = (data.currentInput.UserInputType == Enum.UserInputType.Touch) and data.currentInput.Position or Vector2.new(mouse.X, mouse.Y)
+				                sliding(pos, sliderInner, sliderColored)
+				            end
+				        end)
+				        library.signals[#library.signals+1] = sliderData[newSlider].dragConn
+				    end
 				end)
-				newSlider.InputEnded:Connect(function(input)
-					if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
-						sliderDragging = false
-						isDraggingSomething = false
-						if sliderMoveConn then sliderMoveConn:Disconnect() sliderMoveConn = nil end
-						currentSliderInput = nil
-					end
+				library.signals[#library.signals+1] = newSlider.InputEnded:Connect(function(input)
+				    if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+				        sliderDragging = false
+				        isDraggingSomething = false
+				        local data = sliderData[newSlider]
+				        if data then
+				            if data.moveConn then data.moveConn:Disconnect() end
+				            if data.dragConn then data.dragConn:Disconnect() end
+				            sliderData[newSlider] = nil
+				        end
+				    end
 				end)
-				local currentSliderInput = nil
-				local sliderDragConn = nil
-				local sliderMoveConn = nil
-				library.signals[1 + #library.signals] = newSlider.InputBegan:Connect(function(input)
-					if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
-						sliderDragging = true
-						isDraggingSomething = true
-						currentSliderInput = input
-						-- Track touch movement
-						sliderMoveConn = userInputService.InputChanged:Connect(function(inp)
-							if sliderDragging and inp.UserInputType == Enum.UserInputType.Touch then
-								currentSliderInput = inp
-							end
-						end)
-						library.signals[#library.signals+1] = sliderMoveConn
-					end
+								library.signals[1 + #library.signals] = newSlider.InputBegan:Connect(function(input)
+				    if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+				        sliderDragging = true
+				        isDraggingSomething = true
+				        -- Initialize slider data
+				        sliderData[newSlider] = sliderData[newSlider] or {}
+				        sliderData[newSlider].currentInput = input
+				        -- Track touch movement
+				        sliderData[newSlider].moveConn = userInputService.InputChanged:Connect(function(inp)
+				            if sliderData[newSlider] and sliderDragging and inp.UserInputType == Enum.UserInputType.Touch then
+				                sliderData[newSlider].currentInput = inp
+				            end
+				        end)
+				        library.signals[#library.signals+1] = sliderData[newSlider].moveConn
+				        -- Start RenderStepped drag loop
+				        sliderData[newSlider].dragConn = runService.RenderStepped:Connect(function()
+				            local data = sliderData[newSlider]
+				            if data and data.currentInput then
+				                local pos = (data.currentInput.UserInputType == Enum.UserInputType.Touch) and data.currentInput.Position or Vector2.new(mouse.X, mouse.Y)
+				                sliding(pos, sliderInner, sliderColored)
+				            end
+				        end)
+				        library.signals[#library.signals+1] = sliderData[newSlider].dragConn
+				    end
 				end)
 				library.signals[1 + #library.signals] = userInputService.InputChanged:Connect(function(input)
-					if not library.colorpicker and sliderDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+					if not library.colorpicker and sliderDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
 						sliding(input, sliderInner, sliderColored)
 					end
 				end)
@@ -5068,7 +5074,7 @@ function library:CreateWindow(options, ...)
 						SetupValidation()
 					end
 				end
-				library.signals[1 + #library.signals] = dropdownToggle.Activated:Connect(function()
+				library.signals[1 + #library.signals] = dropdownToggle.MouseButton1Click:Connect(function()
 					showing = not showing
 					display(showing)
 				end)
@@ -5913,7 +5919,7 @@ function library:CreateWindow(options, ...)
 							offset = offset + textsize + 6
 							sectionFunctions:Update()
 							local presses = 0
-							library.signals[1 + #library.signals] = realButton.Activated:Connect(function()
+							library.signals[1 + #library.signals] = realButton.MouseButton1Click:Connect(function()
 								if not library.colorpicker and not submenuOpen then
 									presses = 1 + presses
 									task.spawn(callback, presses)
@@ -6422,7 +6428,7 @@ function library:CreateWindow(options, ...)
 						optionButton.TextColor3 = (togged and library.colors.main) or library.colors.otherElementText
 						optionButton.TextSize = 14
 						optionButton.TextXAlignment = Enum.TextXAlignment.Left
-						library.signals[1 + #library.signals] = optionButton.Activated:Connect(function()
+						library.signals[1 + #library.signals] = optionButton.MouseButton1Click:Connect(function()
 							if not library.colorpicker then
 								restorezindex[newSection] = restorezindex[newSection] or newSection.ZIndex
 								restorezindex[newDropdown] = restorezindex[newDropdown] or newDropdown.ZIndex
@@ -6608,7 +6614,7 @@ function library:CreateWindow(options, ...)
 					end
 				end
 				library.signals[1 + #library.signals] = newDropdown.InputEnded:Connect(function(input)
-					if not library.colorpicker and ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) then
+					if not library.colorpicker and input.UserInputType == Enum.UserInputType.MouseButton1 then
 						showing = not showing
 						display(showing)
 					end
@@ -6635,7 +6641,7 @@ function library:CreateWindow(options, ...)
 						}):Play()
 					end
 				end)
-				library.signals[1 + #library.signals] = dropdownToggle.Activated:Connect(function()
+				library.signals[1 + #library.signals] = dropdownToggle.MouseButton1Click:Connect(function()
 					if not library.colorpicker then
 						showing = not showing
 						display(showing)
@@ -6909,7 +6915,7 @@ function library:CreateWindow(options, ...)
 						task.spawn(callback, newColor, last_vv, rainbsow)
 					end
 				end
-				library.signals[1 + #library.signals] = colorPickerButton.Activated:Connect(function()
+				library.signals[1 + #library.signals] = colorPickerButton.MouseButton1Click:Connect(function()
 					if submenuOpen == colorPicker or submenuOpen == nil then
 						colorPickerEnabled = not colorPickerEnabled
 						library.colorpicker = colorPickerEnabled
@@ -7163,13 +7169,13 @@ function library:CreateWindow(options, ...)
 					end
 					UpdateColorPicker(library_flags[flagName])
 				end
-				library.signals[1 + #library.signals] = randomColorButton.Activated:Connect(function()
+				library.signals[1 + #library.signals] = randomColorButton.MouseButton1Click:Connect(function()
 					if rainbowColorMode then
 						setrainbow(false)
 					end
 					UpdateColorPicker(Color3.fromRGB(math.random(0, 255), math.random(0, 255), math.random(0, 255)))
 				end)
-				library.signals[1 + #library.signals] = rainbowButton.Activated:Connect(setrainbow)
+				library.signals[1 + #library.signals] = rainbowButton.MouseButton1Click:Connect(setrainbow)
 				sectionFunctions:Update()
 				library.signals[1 + #library.signals] = newColorPicker.MouseEnter:Connect(function()
 					tweenService:Create(colorPicker, TweenInfo.new(0.25, library.configuration.easingStyle, library.configuration.easingDirection), {
@@ -7204,7 +7210,7 @@ function library:CreateWindow(options, ...)
 				colorS = (math.clamp(selectorColor.AbsolutePosition.X - color.AbsolutePosition.X, 0, color.AbsoluteSize.X) / color.AbsoluteSize.X)
 				colorV = 1 - (math.clamp(selectorColor.AbsolutePosition.Y - color.AbsolutePosition.Y, 0, color.AbsoluteSize.Y) / color.AbsoluteSize.Y)
 				library.signals[1 + #library.signals] = color.InputBegan:Connect(function(input)
-					if ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) then
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						isDraggingSomething = true
 						colorInput = (colorInput and colorInput:Disconnect() and nil) or runService.RenderStepped:Connect(function()
 							local colorX = (math.clamp(mouse.X - color.AbsolutePosition.X, 0, color.AbsoluteSize.X) / color.AbsoluteSize.X)
@@ -7218,7 +7224,7 @@ function library:CreateWindow(options, ...)
 					end
 				end)
 				library.signals[1 + #library.signals] = color.InputEnded:Connect(function(input)
-					if ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) then
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						if colorInput then
 							isDraggingSomething = false
 							colorInput:Disconnect()
@@ -7226,7 +7232,7 @@ function library:CreateWindow(options, ...)
 					end
 				end)
 				library.signals[1 + #library.signals] = hue.InputBegan:Connect(function(input)
-					if ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) then
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						if hueInput then
 							hueInput:Disconnect()
 						end
@@ -7241,7 +7247,7 @@ function library:CreateWindow(options, ...)
 					end
 				end)
 				library.signals[1 + #library.signals] = hue.InputEnded:Connect(function(input)
-					if hueInput and ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) then
+					if hueInput and input.UserInputType == Enum.UserInputType.MouseButton1 then
 						isDraggingSomething = false
 						hueInput:Disconnect()
 					end
@@ -7382,16 +7388,16 @@ function library:CreateWindow(options, ...)
 				end
 			end
 		end
-
-
-
-
-
-
-
-
-
-
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		return tabFunctions
 	end
 	windowFunctions.AddTab = windowFunctions.CreateTab
@@ -7457,70 +7463,70 @@ function library:CreateWindow(options, ...)
 			Value = "rbxassetid://4427304036",
 			Callback = updatecolorsnotween
 		}}, {"AddColorpicker", "__Designer.Colorpicker.ImageColor", backgroundsection, {
-				Name = "Image Color",
-				Flag = "__Designer.Background.ImageColor",
-				Value = Color3.new(1, 1, 1),
-				Callback = updatecolorsnotween,
-				__designer = 1
-			}}, {"AddSlider", "__Designer.Slider.ImageTransparency", backgroundsection, {
-				Name = "Image Transparency",
-				Flag = "__Designer.Background.ImageTransparency",
-				Value = 95,
-				Min = 0,
-				Max = 100,
-				Format = "Image Transparency: %s%%",
-				Textbox = true,
-				Callback = updatecolorsnotween
-			}}, {"AddToggle", "__Designer.Toggle.UseBackgroundImage", backgroundsection, {
-				Name = "Use Background Image",
-				Flag = "__Designer.Background.UseBackgroundImage",
-				Value = true,
-				Callback = updatecolorsnotween
-			}}, {"AddPersistence", "__Designer.Persistence.ThemeFile", filessection, {
-				Name = "Theme Profile",
-				Flag = "__Designer.Files.ThemeFile",
-				Workspace = "Pepsi Lib Themes",
-				Flags = flags,
-				Suffix = "Theme",
-				Desginer = true
-			}}, {"AddTextbox", "__Designer.Textbox.WorkspaceName", filessection, {
-				Name = "Workspace Name",
-				Value = library.WorkspaceName or "Unnamed Workspace",
-				Flag = "__Designer.Files.WorkspaceFile",
-				Callback = function(n, o)
-					persistoptions.Workspace = n or o
-				end
-			}}, {"AddPersistence", "__Designer.Persistence.WorkspaceProfile", filessection, persistoptions}, {"AddButton", "__Designer.Button.TerminateGUI", settingssection, {{
-				Name = "Terminate GUI",
-				Callback = library.unload
-			}, {
-					Name = "Reset GUI",
-					Callback = resetall
-				}, {
-					Name = "Reset Designer",
-					Callback = function()
-						destroyrainbows = true
-						pcall(function()
-							for k, v in next, elements do
-								if v and k and v.Set and (v.Default ~= nil) and (library_flags[k] ~= v.Default) and (string.sub(k, 1, 11) == "__Designer.") then
-									v:Set(v.Default)
-								end
-							end
-						end)
+			Name = "Image Color",
+			Flag = "__Designer.Background.ImageColor",
+			Value = Color3.new(1, 1, 1),
+			Callback = updatecolorsnotween,
+			__designer = 1
+		}}, {"AddSlider", "__Designer.Slider.ImageTransparency", backgroundsection, {
+			Name = "Image Transparency",
+			Flag = "__Designer.Background.ImageTransparency",
+			Value = 95,
+			Min = 0,
+			Max = 100,
+			Format = "Image Transparency: %s%%",
+			Textbox = true,
+			Callback = updatecolorsnotween
+		}}, {"AddToggle", "__Designer.Toggle.UseBackgroundImage", backgroundsection, {
+			Name = "Use Background Image",
+			Flag = "__Designer.Background.UseBackgroundImage",
+			Value = true,
+			Callback = updatecolorsnotween
+		}}, {"AddPersistence", "__Designer.Persistence.ThemeFile", filessection, {
+			Name = "Theme Profile",
+			Flag = "__Designer.Files.ThemeFile",
+			Workspace = "Pepsi Lib Themes",
+			Flags = flags,
+			Suffix = "Theme",
+			Desginer = true
+		}}, {"AddTextbox", "__Designer.Textbox.WorkspaceName", filessection, {
+			Name = "Workspace Name",
+			Value = library.WorkspaceName or "Unnamed Workspace",
+			Flag = "__Designer.Files.WorkspaceFile",
+			Callback = function(n, o)
+				persistoptions.Workspace = n or o
+			end
+		}}, {"AddPersistence", "__Designer.Persistence.WorkspaceProfile", filessection, persistoptions}, {"AddButton", "__Designer.Button.TerminateGUI", settingssection, {{
+			Name = "Terminate GUI",
+			Callback = library.unload
+		}, {
+			Name = "Reset GUI",
+			Callback = resetall
+		}, {
+			Name = "Reset Designer",
+			Callback = function()
+				destroyrainbows = true
+				pcall(function()
+					for k, v in next, elements do
+						if v and k and v.Set and (v.Default ~= nil) and (library_flags[k] ~= v.Default) and (string.sub(k, 1, 11) == "__Designer.") then
+							v:Set(v.Default)
+						end
 					end
-				}}}, {"AddKeybind", "__Designer.Keybind.ShowHideKey", settingssection, {
-				Name = "Show/Hide Key",
-				Location = library.configuration,
-				Flag = "__Designer.Settings.ShowHideKey",
-				LocationFlag = "hideKeybind",
-				Value = library.configuration.hideKeybind,
-				CoreBinding = true,
-				Callback = function()
-					lasthidebing = os.clock()
-				end
-			}}, {"AddLabel", "__Designer.Label.Version", settingssection, {
-				Name = "Library Version: " .. tostring(library.Version or "?")
-			}}}
+				end)
+			end
+		}}}, {"AddKeybind", "__Designer.Keybind.ShowHideKey", settingssection, {
+			Name = "Show/Hide Key",
+			Location = library.configuration,
+			Flag = "__Designer.Settings.ShowHideKey",
+			LocationFlag = "hideKeybind",
+			Value = library.configuration.hideKeybind,
+			CoreBinding = true,
+			Callback = function()
+				lasthidebing = os.clock()
+			end
+		}}, {"AddLabel", "__Designer.Label.Version", settingssection, {
+			Name = "Library Version: " .. tostring(library.Version or "?")
+		}}}
 		if setclipboard and daaata[8] then
 			local common_table = daaata[8][4]
 			if common_table then
