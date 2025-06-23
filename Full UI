@@ -6944,6 +6944,8 @@ function library:CreateWindow(options, ...)
 				color.Position = UDim2.fromOffset(5, 5)
 				color.Size = UDim2.new(1, -10, 0, 192)
 				color.Image = "rbxassetid://4155801252"
+				color.Active = true
+				color.Selectable = true
 				selectorColor.Name = "selectorColor"
 				selectorColor.Parent = color
 				selectorColor.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -6951,6 +6953,8 @@ function library:CreateWindow(options, ...)
 				selectorColor.BorderColor3 = Color3.fromRGB(69, 65, 70)
 				selectorColor.Position = UDim2.new(startingColor and select(3, Color3.toHSV(startingColor)))
 				selectorColor.Size = UDim2.fromOffset(4, 4)
+				hue.Active = true
+				hue.Selectable = true
 				hue.Name = "hue"
 				hue.Parent = colorPickerHolderInner
 				hue.BackgroundColor3 = Color3.new(1, 1, 1)
@@ -7208,7 +7212,7 @@ function library:CreateWindow(options, ...)
 						isDraggingSomething = true
 						hueInput = runService.RenderStepped:Connect(function()
 							local hueX = math.clamp(mouse.X - hue.AbsolutePosition.X, 0, hue.AbsoluteSize.X) / hue.AbsoluteSize.X
-							selectorHue.Position = UDim2.new(hueX)
+							selectorHue.Position = UDim2.fromScale(hueX, 0)
 							colorH = 1 - hueX
 							UpdateColorPicker()
 						end)
