@@ -3,7 +3,6 @@ Automated mobile support refactoring:
 - Added touch handling for 0 drag blocks
 Be sure to test thoroughly.
 ]]
-
 --[[ Pepsi's UI Library
 Better and updated web-based docs are planned in distant future.
 Library v0.36 [
@@ -1130,10 +1129,10 @@ local userInputService = game:GetService("UserInputService")
 
 -- Mobile: stop dragging on touch release anywhere
 userInputService.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.Touch then
-		-- Reset global dragging flag
-		isDraggingSomething = false
-	end
+    if input.UserInputType == Enum.UserInputType.Touch then
+        -- Reset global dragging flag
+        isDraggingSomething = false
+    end
 end)
 
 local runService = game:GetService("RunService")
@@ -2168,7 +2167,7 @@ function library:CreateWindow(options, ...)
 			end
 		end)
 	end
-
+	
 	local mobileToggleButton = Instance.new("TextButton")
 	mobileToggleButton.Parent = pepsiLibrary
 	mobileToggleButton.Text = "Toggle UI"
@@ -2228,7 +2227,7 @@ function library:CreateWindow(options, ...)
 			main.Visible = not main.Visible
 		end
 	end)
-
+	
 	local windowFunctions = {
 		tabCount = 0,
 		selected = {},
@@ -4357,69 +4356,69 @@ function library:CreateWindow(options, ...)
 				local sliderDragConn = nil
 				local sliderMoveConn = nil
 				library.signals[1 + #library.signals] = newSlider.InputBegan:Connect(function(input)
-					if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
-						sliderDragging = true
-						isDraggingSomething = true
-						-- Store current input
-						local currentSliderInput = input
-						-- Detect release even if outside
-						input.Changed:Connect(function()
-							if input.UserInputState == Enum.UserInputState.End then
-								sliderDragging = false
-								isDraggingSomething = false
-							end
-						end)
-						-- Track touch movement
-						local sliderMoveConn = userInputService.InputChanged:Connect(function(inp)
-							if sliderDragging and inp.UserInputType == Enum.UserInputType.Touch then
-								currentSliderInput = inp
-							end
-						end)
-						library.signals[#library.signals+1] = sliderMoveConn
-						-- Start RenderStepped drag loop
-						local sliderDragConn = runService.RenderStepped:Connect(function()
-							if currentSliderInput and sliderDragging then
-								local pos = (currentSliderInput.UserInputType == Enum.UserInputType.Touch)
-									and currentSliderInput.Position or Vector2.new(mouse.X, mouse.Y)
-								sliding({'Position'=pos}, sliderInner, sliderColored)
-							end
-						end)
-						library.signals[#library.signals+1] = sliderDragConn
-					end
+				    if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+				        sliderDragging = true
+				        isDraggingSomething = true
+				        -- Store current input
+				        local currentSliderInput = input
+				        -- Detect release even if outside
+				        input.Changed:Connect(function()
+				            if input.UserInputState == Enum.UserInputState.End then
+				                sliderDragging = false
+				                isDraggingSomething = false
+				            end
+				        end)
+				        -- Track touch movement
+				        local sliderMoveConn = userInputService.InputChanged:Connect(function(inp)
+				            if sliderDragging and inp.UserInputType == Enum.UserInputType.Touch then
+				                currentSliderInput = inp
+				            end
+				        end)
+				        library.signals[#library.signals+1] = sliderMoveConn
+				        -- Start RenderStepped drag loop
+				        local sliderDragConn = runService.RenderStepped:Connect(function()
+				            if currentSliderInput and sliderDragging then
+				                local pos = (currentSliderInput.UserInputType == Enum.UserInputType.Touch)
+				                            and currentSliderInput.Position or Vector2.new(mouse.X, mouse.Y)
+				                sliding({'Position'=pos}, sliderInner, sliderColored)
+				            end
+				        end)
+				        library.signals[#library.signals+1] = sliderDragConn
+				    end
 				end)
 				local currentSliderInput = nil
 				local sliderDragConn = nil
 				local sliderMoveConn = nil
 				library.signals[1 + #library.signals] = newSlider.InputBegan:Connect(function(input)
-					if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
-						sliderDragging = true
-						isDraggingSomething = true
-						-- Store current input
-						local currentSliderInput = input
-						-- Detect release even if outside
-						input.Changed:Connect(function()
-							if input.UserInputState == Enum.UserInputState.End then
-								sliderDragging = false
-								isDraggingSomething = false
-							end
-						end)
-						-- Track touch movement
-						local sliderMoveConn = userInputService.InputChanged:Connect(function(inp)
-							if sliderDragging and inp.UserInputType == Enum.UserInputType.Touch then
-								currentSliderInput = inp
-							end
-						end)
-						library.signals[#library.signals+1] = sliderMoveConn
-						-- Start RenderStepped drag loop
-						local sliderDragConn = runService.RenderStepped:Connect(function()
-							if currentSliderInput and sliderDragging then
-								local pos = (currentSliderInput.UserInputType == Enum.UserInputType.Touch)
-									and currentSliderInput.Position or Vector2.new(mouse.X, mouse.Y)
-								sliding({'Position'=pos}, sliderInner, sliderColored)
-							end
-						end)
-						library.signals[#library.signals+1] = sliderDragConn
-					end
+				    if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+				        sliderDragging = true
+				        isDraggingSomething = true
+				        -- Store current input
+				        local currentSliderInput = input
+				        -- Detect release even if outside
+				        input.Changed:Connect(function()
+				            if input.UserInputState == Enum.UserInputState.End then
+				                sliderDragging = false
+				                isDraggingSomething = false
+				            end
+				        end)
+				        -- Track touch movement
+				        local sliderMoveConn = userInputService.InputChanged:Connect(function(inp)
+				            if sliderDragging and inp.UserInputType == Enum.UserInputType.Touch then
+				                currentSliderInput = inp
+				            end
+				        end)
+				        library.signals[#library.signals+1] = sliderMoveConn
+				        -- Start RenderStepped drag loop
+				        local sliderDragConn = runService.RenderStepped:Connect(function()
+				            if currentSliderInput and sliderDragging then
+				                local pos = (currentSliderInput.UserInputType == Enum.UserInputType.Touch)
+				                            and currentSliderInput.Position or Vector2.new(mouse.X, mouse.Y)
+				                sliding({'Position'=pos}, sliderInner, sliderColored)
+				            end
+				        end)
+				        library.signals[#library.signals+1] = sliderDragConn
+				    end
 				end)
 				library.signals[1 + #library.signals] = userInputService.InputChanged:Connect(function(input)
 					if not library.colorpicker and sliderDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
@@ -7408,16 +7407,16 @@ function library:CreateWindow(options, ...)
 				end
 			end
 		end
-
-
-
-
-
-
-
-
-
-
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		return tabFunctions
 	end
 	windowFunctions.AddTab = windowFunctions.CreateTab
@@ -7483,70 +7482,70 @@ function library:CreateWindow(options, ...)
 			Value = "rbxassetid://4427304036",
 			Callback = updatecolorsnotween
 		}}, {"AddColorpicker", "__Designer.Colorpicker.ImageColor", backgroundsection, {
-				Name = "Image Color",
-				Flag = "__Designer.Background.ImageColor",
-				Value = Color3.new(1, 1, 1),
-				Callback = updatecolorsnotween,
-				__designer = 1
-			}}, {"AddSlider", "__Designer.Slider.ImageTransparency", backgroundsection, {
-				Name = "Image Transparency",
-				Flag = "__Designer.Background.ImageTransparency",
-				Value = 95,
-				Min = 0,
-				Max = 100,
-				Format = "Image Transparency: %s%%",
-				Textbox = true,
-				Callback = updatecolorsnotween
-			}}, {"AddToggle", "__Designer.Toggle.UseBackgroundImage", backgroundsection, {
-				Name = "Use Background Image",
-				Flag = "__Designer.Background.UseBackgroundImage",
-				Value = true,
-				Callback = updatecolorsnotween
-			}}, {"AddPersistence", "__Designer.Persistence.ThemeFile", filessection, {
-				Name = "Theme Profile",
-				Flag = "__Designer.Files.ThemeFile",
-				Workspace = "Pepsi Lib Themes",
-				Flags = flags,
-				Suffix = "Theme",
-				Desginer = true
-			}}, {"AddTextbox", "__Designer.Textbox.WorkspaceName", filessection, {
-				Name = "Workspace Name",
-				Value = library.WorkspaceName or "Unnamed Workspace",
-				Flag = "__Designer.Files.WorkspaceFile",
-				Callback = function(n, o)
-					persistoptions.Workspace = n or o
-				end
-			}}, {"AddPersistence", "__Designer.Persistence.WorkspaceProfile", filessection, persistoptions}, {"AddButton", "__Designer.Button.TerminateGUI", settingssection, {{
-				Name = "Terminate GUI",
-				Callback = library.unload
-			}, {
-					Name = "Reset GUI",
-					Callback = resetall
-				}, {
-					Name = "Reset Designer",
-					Callback = function()
-						destroyrainbows = true
-						pcall(function()
-							for k, v in next, elements do
-								if v and k and v.Set and (v.Default ~= nil) and (library_flags[k] ~= v.Default) and (string.sub(k, 1, 11) == "__Designer.") then
-									v:Set(v.Default)
-								end
-							end
-						end)
+			Name = "Image Color",
+			Flag = "__Designer.Background.ImageColor",
+			Value = Color3.new(1, 1, 1),
+			Callback = updatecolorsnotween,
+			__designer = 1
+		}}, {"AddSlider", "__Designer.Slider.ImageTransparency", backgroundsection, {
+			Name = "Image Transparency",
+			Flag = "__Designer.Background.ImageTransparency",
+			Value = 95,
+			Min = 0,
+			Max = 100,
+			Format = "Image Transparency: %s%%",
+			Textbox = true,
+			Callback = updatecolorsnotween
+		}}, {"AddToggle", "__Designer.Toggle.UseBackgroundImage", backgroundsection, {
+			Name = "Use Background Image",
+			Flag = "__Designer.Background.UseBackgroundImage",
+			Value = true,
+			Callback = updatecolorsnotween
+		}}, {"AddPersistence", "__Designer.Persistence.ThemeFile", filessection, {
+			Name = "Theme Profile",
+			Flag = "__Designer.Files.ThemeFile",
+			Workspace = "Pepsi Lib Themes",
+			Flags = flags,
+			Suffix = "Theme",
+			Desginer = true
+		}}, {"AddTextbox", "__Designer.Textbox.WorkspaceName", filessection, {
+			Name = "Workspace Name",
+			Value = library.WorkspaceName or "Unnamed Workspace",
+			Flag = "__Designer.Files.WorkspaceFile",
+			Callback = function(n, o)
+				persistoptions.Workspace = n or o
+			end
+		}}, {"AddPersistence", "__Designer.Persistence.WorkspaceProfile", filessection, persistoptions}, {"AddButton", "__Designer.Button.TerminateGUI", settingssection, {{
+			Name = "Terminate GUI",
+			Callback = library.unload
+		}, {
+			Name = "Reset GUI",
+			Callback = resetall
+		}, {
+			Name = "Reset Designer",
+			Callback = function()
+				destroyrainbows = true
+				pcall(function()
+					for k, v in next, elements do
+						if v and k and v.Set and (v.Default ~= nil) and (library_flags[k] ~= v.Default) and (string.sub(k, 1, 11) == "__Designer.") then
+							v:Set(v.Default)
+						end
 					end
-				}}}, {"AddKeybind", "__Designer.Keybind.ShowHideKey", settingssection, {
-				Name = "Show/Hide Key",
-				Location = library.configuration,
-				Flag = "__Designer.Settings.ShowHideKey",
-				LocationFlag = "hideKeybind",
-				Value = library.configuration.hideKeybind,
-				CoreBinding = true,
-				Callback = function()
-					lasthidebing = os.clock()
-				end
-			}}, {"AddLabel", "__Designer.Label.Version", settingssection, {
-				Name = "Library Version: " .. tostring(library.Version or "?")
-			}}}
+				end)
+			end
+		}}}, {"AddKeybind", "__Designer.Keybind.ShowHideKey", settingssection, {
+			Name = "Show/Hide Key",
+			Location = library.configuration,
+			Flag = "__Designer.Settings.ShowHideKey",
+			LocationFlag = "hideKeybind",
+			Value = library.configuration.hideKeybind,
+			CoreBinding = true,
+			Callback = function()
+				lasthidebing = os.clock()
+			end
+		}}, {"AddLabel", "__Designer.Label.Version", settingssection, {
+			Name = "Library Version: " .. tostring(library.Version or "?")
+		}}}
 		if setclipboard and daaata[8] then
 			local common_table = daaata[8][4]
 			if common_table then
