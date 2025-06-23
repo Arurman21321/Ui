@@ -7185,7 +7185,7 @@ function library:CreateWindow(options, ...)
 						or   input.UserInputType == Enum.UserInputType.Touch then
 
 						isDraggingSomething = true
-						colorInput = RunService.RenderStepped:Connect(function()
+						colorInput = runService.RenderStepped:Connect(function()
 							local pos    = input.Position or userInputService:GetMouseLocation()
 							local colorX = math.clamp((pos.X - color.AbsolutePosition.X)/color.AbsoluteSize.X, 0, 1)
 							local colorY = math.clamp((pos.Y - color.AbsolutePosition.Y)/color.AbsoluteSize.Y, 0, 1)
