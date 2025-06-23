@@ -7186,12 +7186,19 @@ function library:CreateWindow(options, ...)
 
 						isDraggingSomething = true
 						colorInput = runService.RenderStepped:Connect(function()
-							local pos    = input.Position or userInputService:GetMouseLocation()
-							local colorX = math.clamp((pos.X - color.AbsolutePosition.X)/color.AbsoluteSize.X, 0, 1)
-							local colorY = math.clamp((pos.Y - color.AbsolutePosition.Y)/color.AbsoluteSize.Y, 0, 1)
-							-- center‐anchored + 2px offset:
+							-- Get current mouse position every frame
+							local pos = userInputService:GetMouseLocation()
+
+							-- Calculate relative position
+							local colorX = math.clamp((pos.X - color.AbsolutePosition.X) / color.AbsoluteSize.X, 0, 1)
+							local colorY = math.clamp((pos.Y - color.AbsolutePosition.Y) / color.AbsoluteSize.Y, 0, 1)
+
+							-- Move selector so it's centered properly on the color box
 							selectorColor.Position = UDim2.new(colorX, -2, colorY, -2)
+
+							-- Save S and V
 							colorS, colorV = colorX, 1 - colorY
+
 							UpdateColorPicker()
 						end)
 
