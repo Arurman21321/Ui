@@ -6951,8 +6951,7 @@ function library:CreateWindow(options, ...)
 				selectorColor.AnchorPoint = Vector2.new(0.5, 0.5)
 				selectorColor.BackgroundColor3 = Color3.fromRGB(144, 144, 144)
 				selectorColor.BorderColor3 = Color3.fromRGB(69, 65, 70)
-				local h,s,v = Color3.toHSV(startingColor)
-				selectorColor.Position    = UDim2.new(s, 0, 1 - v, 0)
+				selectorColor.Position = UDim2.fromScale(colorX, colorY)
 				selectorColor.Size = UDim2.fromOffset(4, 4)
 				hue.Active = true
 				hue.Selectable = true
@@ -7181,28 +7180,23 @@ function library:CreateWindow(options, ...)
 				colorS = (math.clamp(selectorColor.AbsolutePosition.X - color.AbsolutePosition.X, 0, color.AbsoluteSize.X) / color.AbsoluteSize.X)
 				colorV = 1 - (math.clamp(selectorColor.AbsolutePosition.Y - color.AbsolutePosition.Y, 0, color.AbsoluteSize.Y) / color.AbsoluteSize.Y)
 				library.signals[#library.signals+1] = color.InputBegan:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1
-						or   input.UserInputType == Enum.UserInputType.Touch then
-
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 						isDraggingSomething = true
-						colorInput = runService.RenderStepped:Connect(function()
-							-- Get current mouse position every frame
-							local pos = userInputService:GetMouseLocation()
 
-							-- Calculate relative position
+						colorInput = RunService.RenderStepped:Connect(function()
+							local pos = UserInputService:GetMouseLocation() -- mouse or touch
 							local colorX = math.clamp((pos.X - color.AbsolutePosition.X) / color.AbsoluteSize.X, 0, 1)
 							local colorY = math.clamp((pos.Y - color.AbsolutePosition.Y) / color.AbsoluteSize.Y, 0, 1)
 
-							-- Move selector so it's centered properly on the color box
-							selectorColor.Position = UDim2.new(colorX, -2, colorY, -2)
+							-- center the selector
+							selectorColor.Position = UDim2.fromScale(colorX, colorY)
 
-							-- Save S and V
-							colorS, colorV = colorX, 1 - colorY
-
+							colorS = colorX
+							colorV = 1 - colorY
 							UpdateColorPicker()
 						end)
 
-						library.signals[#library.signals+1] = colorInput
+						library.signals[#library.signals + 1] = colorInput
 					end
 				end)
 
@@ -7271,7 +7265,7 @@ function library:CreateWindow(options, ...)
 						options.Location[options.LocationFlag or flagName] = clr
 					end
 					color.BackgroundColor3 = clr
-					selectorColor.Position = UDim2.new(clr and select(3, Color3.toHSV(clr)))
+					selectorColor.Position = UDim2.fromScale(colorX, colorY)
 					selectorHue.Position = UDim2.new(1 - (Color3.toHSV(clr)))
 					colorPickerInner.BackgroundColor3 = darkenColor(clr, 1.5)
 					colorPickerInner.ImageColor3 = darkenColor(clr, 2.5)
@@ -7295,7 +7289,8 @@ function library:CreateWindow(options, ...)
 					colorPickerName, callback = options.Name or colorPickerName, options.Callback
 					local clr = library_flags[flagName]
 					color.BackgroundColor3 = clr
-					selectorColor.Position = UDim2.new(clr and select(3, Color3.toHSV(clr)))
+					selectorColor.Position = UDim2.fromScale(colorX, colorY)
+
 					selectorHue.Position = UDim2.new(1 - (Color3.toHSV(clr)))
 					colorPickerInner.BackgroundColor3 = darkenColor(clr, 1.5)
 					colorPickerInner.ImageColor3 = darkenColor(clr, 2.5)
