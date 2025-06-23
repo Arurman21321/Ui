@@ -6951,7 +6951,10 @@ function library:CreateWindow(options, ...)
 				selectorColor.AnchorPoint = Vector2.new(0, 0)
 				selectorColor.BackgroundColor3 = Color3.fromRGB(144, 144, 144)
 				selectorColor.BorderColor3 = Color3.fromRGB(69, 65, 70)
-				selectorColor.Position = UDim2.new(startingColor and select(3, Color3.toHSV(startingColor)))
+				do
+					local h,s,v = Color3.toHSV(startingColor)
+					selectorColor.Position = UDim2.fromScale(s, 1 - v)
+				end
 				selectorColor.Size = UDim2.fromOffset(4, 4)
 				hue.Active = true
 				hue.Selectable = true
@@ -6969,10 +6972,13 @@ function library:CreateWindow(options, ...)
 				hueGradient.Parent = hue
 				selectorHue.Name = "selectorHue"
 				selectorHue.Parent = hue
-				selectorHue.BackgroundColor3 = Color3:fromRGB(125, 255)
+				selectorHue.BackgroundColor3 = Color3:fromRGB(125, 55)
 				selectorHue.BackgroundTransparency = 0.2
 				selectorHue.BorderColor3 = Color3:fromRGB(84, 91)
-				selectorHue.Position = UDim2.new(1 - (Color3.toHSV(startingColor)))
+				do
+					local h,s,v = Color3.toHSV(startingColor)
+					selectorHue.Position = UDim2.fromScale(1 - h, 0)
+				end
 				selectorHue.Size = UDim2:new(2, 1)
 				hexInput.Name = "hexInput"
 				hexInput.Parent = colorPickerHolderInner
@@ -7211,11 +7217,13 @@ function library:CreateWindow(options, ...)
 						end
 						isDraggingSomething = true
 						hueInput = runService.RenderStepped:Connect(function()
-							local hueX = math.clamp(mouse.X - hue.AbsolutePosition.X, 0, hue.AbsoluteSize.X) / hue.AbsoluteSize.X
+							local pos = input.Position or userInputService:GetMouseLocation()
+							local hueX = math.clamp((pos.X - hue.AbsolutePosition.X) / hue.AbsoluteSize.X, 0, 1)
 							selectorHue.Position = UDim2.fromScale(hueX, 0)
 							colorH = 1 - hueX
 							UpdateColorPicker()
 						end)
+
 						library.signals[1 + #library.signals] = hueInput
 					end
 				end)
