@@ -6948,7 +6948,7 @@ function library:CreateWindow(options, ...)
 				color.Selectable = true
 				selectorColor.Name = "selectorColor"
 				selectorColor.Parent = color
-				selectorColor.AnchorPoint = Vector2.new(0.5, 0.5)
+				selectorColor.AnchorPoint = Vector2.new(0, 0)
 				selectorColor.BackgroundColor3 = Color3.fromRGB(144, 144, 144)
 				selectorColor.BorderColor3 = Color3.fromRGB(69, 65, 70)
 				selectorColor.Position = UDim2.new(startingColor and select(3, Color3.toHSV(startingColor)))
@@ -7182,7 +7182,7 @@ function library:CreateWindow(options, ...)
 						isDraggingSomething = true
 
 						colorInput = runService.RenderStepped:Connect(function()
-							local pos = userInputService:GetMouseLocation() -- touch or mouse
+							local pos = input.Position or userInputService:GetMouseLocation()
 							local colorX = math.clamp(pos.X - color.AbsolutePosition.X, 0, color.AbsoluteSize.X) / color.AbsoluteSize.X
 							local colorY = math.clamp(pos.Y - color.AbsolutePosition.Y, 0, color.AbsoluteSize.Y) / color.AbsoluteSize.Y
 							selectorColor.Position = UDim2.fromScale(colorX, colorY)
