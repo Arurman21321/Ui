@@ -7199,6 +7199,8 @@ function library:CreateWindow(options, ...)
 						library.signals[#library.signals + 1] = colorInput
 					end
 				end)
+				print(color.AbsoluteSize)
+
 
 				library.signals[#library.signals+1] = color.InputEnded:Connect(function(input)
 					if (input.UserInputType == Enum.UserInputType.MouseButton1
