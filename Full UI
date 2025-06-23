@@ -4353,22 +4353,46 @@ function library:CreateWindow(options, ...)
 					end
 					last_val = sliderValue
 				end
+				local currentSliderInput = nil
+				local sliderDragConn = nil
+				local sliderMoveConn = nil
 				library.signals[1 + #library.signals] = newSlider.InputBegan:Connect(function(input)
-					if not library.colorpicker and ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) then
+					if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
 						sliderDragging = true
 						isDraggingSomething = true
+						currentSliderInput = input
+						-- Track touch movement
+						sliderMoveConn = userInputService.InputChanged:Connect(function(inp)
+							if sliderDragging and inp.UserInputType == Enum.UserInputType.Touch then
+								currentSliderInput = inp
+							end
+						end)
+						library.signals[#library.signals+1] = sliderMoveConn
 					end
 				end)
-				library.signals[1 + #library.signals] = newSlider.InputEnded:Connect(function(input)
-					if not library.colorpicker and ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) then
+				newSlider.InputEnded:Connect(function(input)
+					if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
 						sliderDragging = false
 						isDraggingSomething = false
+						if sliderMoveConn then sliderMoveConn:Disconnect() sliderMoveConn = nil end
+						currentSliderInput = nil
 					end
 				end)
+				local currentSliderInput = nil
+				local sliderDragConn = nil
+				local sliderMoveConn = nil
 				library.signals[1 + #library.signals] = newSlider.InputBegan:Connect(function(input)
-					if not library.colorpicker and not isDraggingSomething and ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) then
+					if not library.colorpicker and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+						sliderDragging = true
 						isDraggingSomething = true
-						sliding(input, sliderInner, sliderColored)
+						currentSliderInput = input
+						-- Track touch movement
+						sliderMoveConn = userInputService.InputChanged:Connect(function(inp)
+							if sliderDragging and inp.UserInputType == Enum.UserInputType.Touch then
+								currentSliderInput = inp
+							end
+						end)
+						library.signals[#library.signals+1] = sliderMoveConn
 					end
 				end)
 				library.signals[1 + #library.signals] = userInputService.InputChanged:Connect(function(input)
