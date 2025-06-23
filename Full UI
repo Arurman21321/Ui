@@ -6948,13 +6948,11 @@ function library:CreateWindow(options, ...)
 				color.Selectable = true
 				selectorColor.Name = "selectorColor"
 				selectorColor.Parent = color
-				selectorColor.AnchorPoint = Vector2.new(0, 0)
+				selectorColor.AnchorPoint = Vector2.new(0.5, 0.5)
 				selectorColor.BackgroundColor3 = Color3.fromRGB(144, 144, 144)
 				selectorColor.BorderColor3 = Color3.fromRGB(69, 65, 70)
-				do
-					local h,s,v = Color3.toHSV(startingColor)
-					selectorColor.Position = UDim2.fromScale(s, 1 - v)
-				end
+				local h,s,v = Color3.toHSV(startingColor)
+				selectorColor.Position    = UDim2.new(s, 0, 1 - v, 0)
 				selectorColor.Size = UDim2.fromOffset(4, 4)
 				hue.Active = true
 				hue.Selectable = true
@@ -6975,11 +6973,10 @@ function library:CreateWindow(options, ...)
 				selectorHue.BackgroundColor3 = Color3:fromRGB(125, 55)
 				selectorHue.BackgroundTransparency = 0.2
 				selectorHue.BorderColor3 = Color3:fromRGB(84, 91)
-				do
-					local h,s,v = Color3.toHSV(startingColor)
-					selectorHue.Position = UDim2.fromScale(1 - h, 0)
-				end
-				selectorHue.Size = UDim2:new(2, 1)
+				selectorHue.AnchorPoint = Vector2.new(0.5, 0.5)
+				local h,s,v = Color3.toHSV(startingColor)
+				selectorHue.Position = UDim2.fromScale(1 - h, 0.5)
+				selectorHue.Size = UDim2.fromOffset(4, 14)
 				hexInput.Name = "hexInput"
 				hexInput.Parent = colorPickerHolderInner
 				hexInput.Active = true
@@ -7184,16 +7181,17 @@ function library:CreateWindow(options, ...)
 				colorS = (math.clamp(selectorColor.AbsolutePosition.X - color.AbsolutePosition.X, 0, color.AbsoluteSize.X) / color.AbsoluteSize.X)
 				colorV = 1 - (math.clamp(selectorColor.AbsolutePosition.Y - color.AbsolutePosition.Y, 0, color.AbsoluteSize.Y) / color.AbsoluteSize.Y)
 				library.signals[#library.signals+1] = color.InputBegan:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-						isDraggingSomething = true
+					if input.UserInputType == Enum.UserInputType.MouseButton1
+						or   input.UserInputType == Enum.UserInputType.Touch then
 
-						colorInput = runService.RenderStepped:Connect(function()
-							local pos = input.Position or userInputService:GetMouseLocation()
-							local colorX = math.clamp(pos.X - color.AbsolutePosition.X, 0, color.AbsoluteSize.X) / color.AbsoluteSize.X
-							local colorY = math.clamp(pos.Y - color.AbsolutePosition.Y, 0, color.AbsoluteSize.Y) / color.AbsoluteSize.Y
-							selectorColor.Position = UDim2.fromScale(colorX, colorY)
-							colorS = colorX
-							colorV = 1 - colorY
+						isDraggingSomething = true
+						colorInput = RunService.RenderStepped:Connect(function()
+							local pos    = input.Position or userInputService:GetMouseLocation()
+							local colorX = math.clamp((pos.X - color.AbsolutePosition.X)/color.AbsoluteSize.X, 0, 1)
+							local colorY = math.clamp((pos.Y - color.AbsolutePosition.Y)/color.AbsoluteSize.Y, 0, 1)
+							-- center‐anchored + 2px offset:
+							selectorColor.Position = UDim2.new(colorX, -2, colorY, -2)
+							colorS, colorV = colorX, 1 - colorY
 							UpdateColorPicker()
 						end)
 
@@ -7202,33 +7200,38 @@ function library:CreateWindow(options, ...)
 				end)
 
 				library.signals[#library.signals+1] = color.InputEnded:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-						if colorInput then
-							isDraggingSomething = false
-							colorInput:Disconnect()
-						end
+					if (input.UserInputType == Enum.UserInputType.MouseButton1
+						or   input.UserInputType == Enum.UserInputType.Touch)
+						and colorInput then
+						isDraggingSomething = false
+						colorInput:Disconnect()
 					end
 				end)
 
-				library.signals[1 + #library.signals] = hue.InputBegan:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-						if hueInput then
-							hueInput:Disconnect()
-						end
+				library.signals[#library.signals+1] = hue.InputBegan:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.MouseButton1
+						or   input.UserInputType == Enum.UserInputType.Touch then
+
+						if hueInput then hueInput:Disconnect() end
 						isDraggingSomething = true
-						hueInput = runService.RenderStepped:Connect(function()
-							local pos = input.Position or userInputService:GetMouseLocation()
-							local hueX = math.clamp((pos.X - hue.AbsolutePosition.X) / hue.AbsoluteSize.X, 0, 1)
-							selectorHue.Position = UDim2.fromScale(hueX, 0)
+
+						hueInput = RunService.RenderStepped:Connect(function()
+							local pos  = input.Position or userInputService:GetMouseLocation()
+							local hueX = math.clamp((pos.X - hue.AbsolutePosition.X)/hue.AbsoluteSize.X, 0, 1)
+							-- center‐anchored + 2px offset in X, vertically center Y (.5):
+							selectorHue.Position = UDim2.new(1 - hueX, -2, 0.5, 0)
 							colorH = 1 - hueX
 							UpdateColorPicker()
 						end)
 
-						library.signals[1 + #library.signals] = hueInput
+						library.signals[#library.signals+1] = hueInput
 					end
 				end)
-				library.signals[1 + #library.signals] = hue.InputEnded:Connect(function(input)
-					if hueInput and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+
+				library.signals[#library.signals+1] = hue.InputEnded:Connect(function(input)
+					if (input.UserInputType == Enum.UserInputType.MouseButton1
+						or   input.UserInputType == Enum.UserInputType.Touch)
+						and hueInput then
 						isDraggingSomething = false
 						hueInput:Disconnect()
 					end
