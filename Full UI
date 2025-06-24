@@ -4329,7 +4329,7 @@ function library:CreateWindow(options, ...)
 						ImageColor3 = library.colors.bottomGradient
 					}):Play()
 				end)
-				
+
 				local function sliding(input, sb, sc)
 					local last_val = library_flags[flagName]
 					local pos = UDim2.fromScale(math.clamp((input.Position.X - sb.AbsolutePosition.X) / sb.AbsoluteSize.X, 0, 1), 1)
@@ -7770,6 +7770,8 @@ function library:CreateWindow(options, ...)
 	end
 	return windowFunctions
 end
+print(keybindButton.AbsolutePosition, keybindButton.AbsoluteSize)
+
 library.NewWindow = library.CreateWindow
 library.AddWindow = library.CreateWindow
 library.Window = library.CreateWindow
