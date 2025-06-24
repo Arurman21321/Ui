@@ -2769,7 +2769,7 @@ function library:CreateWindow(options, ...)
 						end)
 						library.signals[1 + #library.signals] = receivingKey
 					end
-					library.signals[1 + #library.signals] = keybindButton.Activated:Connect(newkey)
+					library.signals[1 + #library.signals] = keybindButton.MouseButton1Click:Connect(newkey)
 					if kbpresscallback and not justBinded then
 						library.signals[1 + #library.signals] = userInputService.InputBegan:Connect(function(key, chatting)
 							chatting = chatting or (userInputService:GetFocusedTextBox() and true)
@@ -4329,7 +4329,7 @@ function library:CreateWindow(options, ...)
 						ImageColor3 = library.colors.bottomGradient
 					}):Play()
 				end)
-				
+
 				local function sliding(input, sb, sc)
 					local last_val = library_flags[flagName]
 					local pos = UDim2.fromScale(math.clamp((input.Position.X - sb.AbsolutePosition.X) / sb.AbsoluteSize.X, 0, 1), 1)
