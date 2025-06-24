@@ -2675,9 +2675,9 @@ function library:CreateWindow(options, ...)
 					keybindButton.Active = false
 					keybindButton.BackgroundColor3 = Color3.new(1, 1, 1)
 					keybindButton.BackgroundTransparency = 1
-					keybindButton.Position = UDim2.new(1, -4, 0, 3.5)
+					keybindButton.Position = UDim2.fromScale(0.598130822, 0.184210524)
 					keybindButton.Selectable = false
-					keybindButton.Size = UDim2.fromOffset(textToSize(keybindButton).X + 4, 12)
+					keybindButton.Size = UDim2.fromOffset(46, 12)
 					keybindButton.Font = Enum.Font.Code
 					keybindButton.Text = keyName or (presetKeybind and tostring(presetKeybind):gsub("Enum.KeyCode.", "")) or "[NONE]"
 					keybindButton.TextColor3 = library.colors.otherElementText
@@ -4329,7 +4329,7 @@ function library:CreateWindow(options, ...)
 						ImageColor3 = library.colors.bottomGradient
 					}):Play()
 				end)
-
+				
 				local function sliding(input, sb, sc)
 					local last_val = library_flags[flagName]
 					local pos = UDim2.fromScale(math.clamp((input.Position.X - sb.AbsolutePosition.X) / sb.AbsoluteSize.X, 0, 1), 1)
