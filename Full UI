@@ -992,21 +992,7 @@ local Instance_new = (syn and syn.protect_gui and function(...)
 end) or function(...)
 	local x = {Instance.new(...)}
 	if x[1] then
-		library.objects[1 + #library.objects] = x[1]
-	end
-	return unpack(x)
-end
-library.subs.Instance_new = Instance_new
-local playersservice = game:GetService("Players")
-local function getresolver(listt, filter, method, _)
-	local huo, args = type(filter), {}
-	local hou = typeof(listt)
-	return ((hou == "function") and function(...)
-		return listt(...)
-	end) or ((hou == "table") and function()
-		return listt
-	end) or function()
-		local hardtype = nil
+		library.objects[1 + #library.objects] = x[1WDAFDAWFWA
 		local g = listt
 		for _ = 1, 5 do
 			hardtype = typeof(g)
