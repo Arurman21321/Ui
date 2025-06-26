@@ -3789,7 +3789,7 @@ function library:CreateWindow(options, ...)
 				end
 				library.signals[1 + #library.signals] = keybindButton.Activated:Connect(newkey)
 				library.signals[1 + #library.signals] = newKeybind.InputEnded:Connect(function(input)
-					if not library.colorpicker and not submenuOpen and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType)
+					if not library.colorpicker and not submenuOpen and ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) then
 						newkey()
 					end
 				end)
