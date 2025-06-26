@@ -888,7 +888,7 @@ function SeverAllConnections(t, cache)
 			if cache[v] then
 				continue
 			end
-			local te = v and typeof(v)
+			local te = v and typeof(v)21fwwsawfawfdwdaswdsawerr1f32tes3rf3
 			if te then
 				if te == "RBXScriptConnection" then
 					v:Disconnect()
