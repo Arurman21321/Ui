@@ -1,9 +1,3 @@
---[[
-Automated mobile support refactoring:
-- Added touch handling for 0 drag blocks
-Be sure to test thoroughly.
-]]
-
 --[[ Pepsi's UI Library
 Better and updated web-based docs are planned in distant future.
 Library v0.36 [
@@ -1128,13 +1122,6 @@ library.ResetAll = resetall
 local textService = game:GetService("TextService")
 local userInputService = game:GetService("UserInputService")
 
--- Mobile: stop dragging on touch release anywhere
-userInputService.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.Touch then
-		-- Reset global dragging flag
-		isDraggingSomething = false
-	end
-end)
 
 local runService = game:GetService("RunService")
 local LP = playersservice.LocalPlayer
