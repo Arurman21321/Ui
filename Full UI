@@ -1121,8 +1121,6 @@ end
 library.ResetAll = resetall
 local textService = game:GetService("TextService")
 local userInputService = game:GetService("UserInputService")
-
-
 local runService = game:GetService("RunService")
 local LP = playersservice.LocalPlayer
 library.LP = LP
@@ -1185,7 +1183,7 @@ local function makeDraggable(topBarObject, object)
 	local dragStart = nil
 	local startPosition = nil
 	library.signals[1 + #library.signals] = topBarObject.InputBegan:Connect(function(input)
-		if ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch then
+		if ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType)
 			dragging = true
 			dragStart = input.Position
 			startPosition = object.Position
@@ -1197,7 +1195,7 @@ local function makeDraggable(topBarObject, object)
 		end
 	end)
 	library.signals[1 + #library.signals] = topBarObject.InputChanged:Connect(function(input)
-		if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch then
+		if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType)
 			dragInput = input
 		end
 	end)
