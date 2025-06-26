@@ -2154,66 +2154,6 @@ function library:CreateWindow(options, ...)
 		end)
 	end
 
-	local mobileToggleButton = Instance.new("TextButton")
-	mobileToggleButton.Parent = pepsiLibrary
-	mobileToggleButton.Text = "Toggle UI"
-	mobileToggleButton.Size = UDim2.new(0, 100, 0, 50)
-	mobileToggleButton.Position = UDim2.new(0, 20, 0, 20)
-	mobileToggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-	mobileToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-	mobileToggleButton.BorderSizePixel = 0
-
-	local dragging = false
-	local wasDragged = false
-	local dragInput
-	local dragStart
-	local startPos
-
-	local function update(input)
-		local delta = input.Position - dragStart
-		mobileToggleButton.Position = UDim2.fromOffset(
-			startPos.X + delta.X,
-			startPos.Y + delta.Y
-		)
-	end
-
-	mobileToggleButton.InputBegan:Connect(function(input)
-		if ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch then
-			dragging = true
-			wasDragged = false
-			dragStart = input.Position
-			startPos = Vector2.new(
-				mobileToggleButton.Position.X.Offset,
-				mobileToggleButton.Position.Y.Offset
-			)
-		end
-	end)
-
-	mobileToggleButton.InputChanged:Connect(function(input)
-		if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch then
-			dragInput = input
-		end
-	end)
-
-	userInputService.InputChanged:Connect(function(input)
-		if dragging and input == dragInput then
-			wasDragged = true
-			update(input)
-		end
-	end)
-
-	mobileToggleButton.InputEnded:Connect(function(input)
-		if ((input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch) or input.UserInputType == Enum.UserInputType.Touch then
-			dragging = false
-		end
-	end)
-
-	mobileToggleButton.Activated:Connect(function()
-		if not wasDragged then
-			main.Visible = not main.Visible
-		end
-	end)
-
 	local windowFunctions = {
 		tabCount = 0,
 		selected = {},
